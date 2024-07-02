@@ -1,30 +1,35 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './user/user.module';
+import {Module} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {UserModule} from './user/user.module';
 import {User} from "./user/entities/user.entity";
-import { RoleModule } from './role/role.module';
+import {RoleModule} from './role/role.module';
+import {ConfigModule} from "@nestjs/config";
+import {Role} from "./role/entities/role.entity";
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '12345678',
-      database: 'nest_js',
-      entities: [
-          User
-      ],
-      synchronize: true,
-      autoLoadEntities: true,
-    }),
-    UserModule,
-    RoleModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+        }),
+        TypeOrmModule.forRoot({
+            type: 'mysql',
+            host: process.env.HOST,
+            port: parseInt(process.env.PORT, 10),
+            username: process.env.USER,
+            password: process.env.PASSWORD,
+            database: process.env.DATABASE,
+            entities: [
+                User,
+                Role
+            ],
+            synchronize: true,
+            autoLoadEntities: true,
+        }),
+        UserModule,
+        RoleModule,
+    ],
+    controllers: [],
+    providers: [],
 })
-export class AppModule {}
+export class AppModule {
+}
